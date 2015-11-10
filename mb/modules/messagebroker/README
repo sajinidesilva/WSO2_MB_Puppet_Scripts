@@ -1,0 +1,13 @@
+Newly added variables with default values
+=========================================
+
+cassandra_username = @usrmgt_username
+cassandra_password = @usrmgt_password
+cassandra_cql_port = 9042
+cassandra_replication_factor = 1
+cassandra_read_consistency = 'ONE'
+cassandra_write_consistency = 'ONE'
+
+mb_database = ['HOST','DATABASE','USER','PASSWORD','DOMAIN']
+mb_connector = 'CQL'
+

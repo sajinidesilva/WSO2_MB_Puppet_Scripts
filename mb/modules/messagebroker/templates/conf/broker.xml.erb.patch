@@ -1,0 +1,25 @@
+--- broker.xml.erb	2015-01-27 09:37:43.899689579 -0500
++++ broker.xml.new.erb	2015-01-27 09:32:37.927680949 -0500
+@@ -211,7 +211,7 @@
+         <delivery>
+             <!-- Maximum number of undelivered messages that can have in memory. Increasing this value
+                 increase the possibility of out of memory scenario but performance will be improved-->
+-            <maxNumberOfReadButUndeliveredMessages>1000</maxNumberOfReadButUndeliveredMessages>
++            <maxNumberOfReadButUndeliveredMessages>100000</maxNumberOfReadButUndeliveredMessages>
+ 
+             <!-- This is the ring buffer size of the delivery disruptor. This value should be a 
+             power of 2 (E.g. 1024, 2048, 4096). Use a small ring size if you want to reduce the 
+@@ -314,11 +314,11 @@
+         <!-- This is the global buffer limits which enable/disable the flow control globally -->
+         <global>
+             <lowLimit>800</lowLimit>
+-            <highLimit>8000</highLimit>
++            <highLimit>800000</highLimit>
+         </global>
+ 	    <bufferBased>
+ 	        <lowLimit>100</lowLimit>
+-	        <highLimit>1000</highLimit>
++	        <highLimit>100000</highLimit>
+ 	    </bufferBased>
+         <memoryBased>
+             <memoryCheckInterval>20000</memoryCheckInterval>

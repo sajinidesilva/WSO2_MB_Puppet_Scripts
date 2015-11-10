@@ -1,0 +1,11 @@
+--- wso2server.sh.erb	2015-01-27 09:39:57.835693357 -0500
++++ wso2server.sh.new.erb	2015-01-27 09:35:22.751685598 -0500
+@@ -269,7 +269,7 @@
+ do
+         $JAVACMD \
+         -Xbootclasspath/a:"$CARBON_XBOOTCLASSPATH" \
+-        -Xms1024m -Xmx2048m -XX:MaxPermSize=512m \
++        -Xms1024m -Xmx4096m -XX:MaxPermSize=512m \
+         -XX:+HeapDumpOnOutOfMemoryError \
+         -XX:HeapDumpPath="$CARBON_HOME/repository/logs/heap-dump.hprof" \
+         $JAVA_OPTS \

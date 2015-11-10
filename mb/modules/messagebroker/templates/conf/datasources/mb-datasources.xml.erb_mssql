@@ -1,0 +1,270 @@
+<datasources-configuration xmlns:svns="http://org.wso2.securevault/configuration">
+    <providers>
+        <provider>org.wso2.carbon.cassandra.datareader.hector.HectorBasedDataSourceReader</provider>
+        <provider>org.wso2.carbon.cassandra.datareader.cql.CassandraDataSourceReader</provider>
+        <provider>org.wso2.carbon.ndatasource.rdbms.RDBMSDataSourceReader</provider>
+	</providers>
+
+    <datasources>
+
+		<datasource>
+            <name>WSO2_MB_DB</name>
+            <description>The datasource used for mb config registry</description>
+            <jndiConfig>
+                <name>jdbc/<%= @config_db %></name>
+            </jndiConfig>
+            <definition type="RDBMS">
+                <configuration>
+                    <%- database = @config_database -%>
+        <!--             <url>jdbc:jtds:sqlserver://<%= database[0] %>:<%= @mysql_port %>/<%= @config_db %>?autoReconnect=true</url> --> 
+		    <url>jdbc:jtds:sqlserver://<%= database[0] %>:<%= @mysql_port %>;databaseName=<%= @config_db %>;multiSubnetFailover=true;user=<%= database[2] %>;password=<%= database[3] %>;domain=<%= database[4] %></url>
+                    <username><%= database[2] %></username>
+                    <password><%= database[3] %></password>
+                    <driverClassName>net.sourceforge.jtds.jdbc.Driver</driverClassName>
+                    <maxActive><%= @max_active %></maxActive>
+                    <maxWait><%= @max_wait %></maxWait>
+                    <testOnBorrow>true</testOnBorrow>
+                    <validationQuery>SELECT 1</validationQuery>
+                    <validationInterval>30000</validationInterval>
+                    <minIdle>5</minIdle>
+                    <removeAbandoned>true</removeAbandoned>
+                    <logAbandoned>true</logAbandoned>
+                    <removeAbandonedTimeout>180</removeAbandonedTimeout>
+                </configuration>
+            </definition>
+        </datasource>
+
+        <!-- WSO2 MB embedded H2 Store     -->
+<!--
+        <datasource>
+            <name>WSO2_MB_STORE_DB</name>
+            <description>The datasource used for registry and user manager</description>
+            <jndiConfig>
+                <name>WSO2MBStoreDB</name>
+            </jndiConfig>
+            <definition type="RDBMS">
+                <configuration>
+                    <url>jdbc:h2:repository/database/WSO2MB_DB;DB_CLOSE_ON_EXIT=FALSE;LOCK_TIMEOUT=60000</url>
+                    <driverClassName>org.h2.Driver</driverClassName>
+                    <maxActive>50</maxActive>
+                    <maxWait>60000</maxWait>
+                    <testOnBorrow>true</testOnBorrow>
+                    <validationQuery>SELECT 1</validationQuery>
+                    <validationInterval>30000</validationInterval>
+                </configuration>
+            </definition>
+        </datasource>
+-->
+
+        <!-- WSO2 MB in memory store     -->
+
+        <datasource>
+            <name>WSO2_MB_IN_MEMORY_STORE_DB</name>
+            <jndiConfig>
+                <name>WSO2MBInMemoryStoreDB</name>
+            </jndiConfig>
+            <definition type="RDBMS">
+                <configuration>
+                    <url>jdbc:h2:mem:msg_store</url>
+                    <driverClassName>org.h2.Driver</driverClassName>
+                </configuration>
+            </definition>
+        </datasource>
+
+        <!-- external Cassandra data source. please enable either one of datasource (CQL or Hector) based on your preference -->
+        <!-- CQL datasource -->
+<% if @mb_connector == 'CQL' %>
+        <datasource>
+            <name>WSO2_CASSANDRA_DB</name>
+            <description>The datasource used for cassandra</description>
+            <jndiConfig>
+                <name>WSO2MBStoreDB</name>
+            </jndiConfig>
+            <definition type="CASSANDRA">
+                <configuration>
+                    <async>false</async>
+                    <clusterName><%= @cluster_name %></clusterName>
+                    <compression>SNAPPY</compression>
+                    <concurrency>100</concurrency>
+                    <username><%= @cassandra_username %></username>
+                    <password encrypted="true"><%= @cassandra_password %></password>
+                    <port><%= @cassandra_cql_port %></port>
+                    <maxConnections>100</maxConnections>
+
+                    <hosts>
+                        <% @cassandras.each do |cassandra| %>
+                        <% host = cassandra.split(':') %>
+                        <host><%= host[0] %></host>
+                        <% end %> 
+                    </hosts>
+
+                    <loadBalancePolicy>
+                        <exclusionThreshold>2.5</exclusionThreshold>
+                        <latencyAware>true</latencyAware>
+                        <minMeasure>100</minMeasure>
+                        <policyName>RoundRobinPolicy</policyName>
+                        <retryPeriod>10</retryPeriod>
+                        <scale>2</scale>
+                    </loadBalancePolicy>
+
+                    <poolOptions>
+                        <coreConnectionsForLocal>10</coreConnectionsForLocal>
+                        <coreConnectionsForRemote>10</coreConnectionsForRemote>
+                        <maxConnectionsForLocal>10</maxConnectionsForLocal>
+                        <maxConnectionsForRemote>10</maxConnectionsForRemote>
+                        <maxSimultaneousRequestsForLocal>10</maxSimultaneousRequestsForLocal>
+                        <maxSimultaneousRequestsForRemote>10</maxSimultaneousRequestsForRemote>
+                        <minSimultaneousRequestsForLocal>10</minSimultaneousRequestsForLocal>
+                        <minSimultaneousRequestsForRemote>10</minSimultaneousRequestsForRemote>
+                    </poolOptions>
+
+                    <reconnectPolicy>
+                        <baseDelayMs>100</baseDelayMs>
+                        <policyName>ConstantReconnectionPolicy</policyName>
+                    </reconnectPolicy>
+                    <socketOptions>
+                        <connectTimeoutMillis>10000</connectTimeoutMillis>
+                        <keepAlive>true</keepAlive>
+                        <readTimeoutMillis>15000</readTimeoutMillis>
+                        <tcpNoDelay>true</tcpNoDelay>
+                    </socketOptions>
+
+                </configuration>
+
+            </definition>
+        </datasource>
+<% elsif @mb_connector == 'HECTOR' %>
+        <!-- Hector datasource -->
+        <datasource>
+            <name>HectorDS</name>
+            <description>The datasource used for RSS metadata repository</description>
+            <jndiConfig>
+                <name>WSO2MBStoreDB</name>
+            </jndiConfig>
+            <definition type="HECTOR">
+                <configuration>
+                    <hosts><%= @cassandras.join(',') %></hosts>
+                    <username><%= @cassandra_username %></username>
+                    <password><%= @cassandra_password %></password>
+                    <clusterName><%= @cluster_name %></clusterName>
+                    <maxActive>200</maxActive>
+                    <enableSecurity>false</enableSecurity>
+                </configuration>
+            </definition>
+    </datasource>
+<% elsif @mb_connector == 'RDBMS' %>
+        <datasource>
+            <name>WSO2_MB_STORE_DB</name>
+            <jndiConfig>
+                <name>WSO2MBStoreDB</name>
+            </jndiConfig>
+            <definition type="RDBMS">
+                <configuration>
+                    <% database = @mb_database %>
+                    <url>jdbc:jtds:sqlserver://<%= database[0] %>:<%= @mysql_port %>;databaseName=<%= database[1] %>;multiSubnetFailover=true;user=<%= database[2] %>;password=<%= database[3] %>;domain=<%= database[4] %></url>
+                    <username><%= database[2] %></username>
+                    <password><%= database[3] %></password>
+                    <driverClassName>net.sourceforge.jtds.jdbc.Driver</driverClassName>
+                    <maxActive><%= @max_active %></maxActive>
+                    <maxWait><%= @max_wait %></maxWait>
+                    <minIdle>5</minIdle>
+                    <testOnBorrow>true</testOnBorrow>
+                    <validationQuery>SELECT 1</validationQuery>
+                    <validationInterval>30000</validationInterval>
+                </configuration>
+            </definition>
+        </datasource>
+<% end %>
+
+        <!-- end of external Cassandra data sources.  -->
+
+        <!-- MySQL data source -->
+<!--
+        <datasource>
+             <name>MYSQL_DATA_SOURCE</name>
+             <jndiConfig>
+                 <name>WSO2MBStoreDB</name>
+             </jndiConfig>
+             <definition type="RDBMS">
+                 <configuration>
+                     <driverClassName>com.mysql.jdbc.Driver</driverClassName>
+                     <url>jdbc:mysql://localhost/wso2_mb</url>
+                     <username>root</username>
+                     <password>root</password>
+                 </configuration>
+             </definition>
+         </datasource>
+-->
+
+        <!-- MSSQL server -->
+        <!-- Please enable any one of the following datasource based on your MSSQL driver library -->
+        <!-- JTDS datasource -->
+<!--
+        <datasource>
+            <name>WSO2_MB_STORE_DB</name>
+            <jndiConfig>
+                <name>WSO2MBStoreDB</name>
+            </jndiConfig>
+            <definition type="RDBMS">
+            <configuration>
+                    <url>jdbc:jtds:sqlserver://localhost:1433/wso2_mb</url>
+                    <username>sa</username>
+                    <password>sa</password>
+                    <driverClassName>net.sourceforge.jtds.jdbc.Driver</driverClassName>
+                    <maxActive>200</maxActive>
+                    <maxWait>60000</maxWait>
+                    <minIdle>5</minIdle>
+                    <testOnBorrow>true</testOnBorrow>
+                    <validationQuery>SELECT 1</validationQuery>
+                    <validationInterval>30000</validationInterval>
+                </configuration>
+            </definition>
+        </datasource>
+-->
+
+        <!-- SQLServerXA datasource -->
+<!--
+        <datasource>
+            <name>WSO2_MB_STORE_DB</name>
+            <jndiConfig>
+                <name>WSO2MBStoreDB</name>
+            </jndiConfig>
+            <definition type="RDBMS">
+                <configuration>
+                    <dataSourceClassName>com.microsoft.sqlserver.jdbc.SQLServerXADataSource</dataSourceClassName>
+                    <dataSourceProps>
+                <property name = "URL">jdbc:sqlserver://localhost\SQLExpress:1433</property>
+                <property name="databaseName">wso2_mb</property>
+                        <property name="user">sa</property>
+                        <property name="password">sa</property>
+                    </dataSourceProps>
+                </configuration>
+            </definition>
+        </datasource>
+-->
+
+<!--
+        <datasource>
+            <name>ORACLE_DATA_SOURCE</name>
+            <jndiConfig>
+                <name>WSO2MBStoreDB</name>
+            </jndiConfig>
+            <definition type="RDBMS">
+                <configuration>
+                    <driverClassName>oracle.jdbc.driver.OracleDriver</driverClassName>
+                    <url>jdbc:oracle:thin:@localhost:1521/orcl</url>
+                    <maxActive>100</maxActive>
+                    <maxWait>60000</maxWait>
+                    <minIdle>5</minIdle>
+                    <testOnBorrow>true</testOnBorrow>
+                    <validationQuery>SELECT 1</validationQuery>
+                    <validationInterval>30000</validationInterval>
+                    <username>scott</username>
+                    <password>tiger</password>
+                </configuration>
+            </definition>
+        </datasource>
+-->
+
+    </datasources>
+</datasources-configuration>
