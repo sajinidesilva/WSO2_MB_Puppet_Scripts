@@ -47,17 +47,14 @@
     -->
     <!--HostName>www.wso2.org</HostName-->
 
+ <% if @sub_cluster_domain == 'mgt' %>
+<!--    <MgtHostName><%= @management_subdomain %>.<%= @mb_subdomain %>.<%= @domain %></MgtHostName> -->
+    <% end %>
+
     <!--
     Host name to be used for the Carbon management console
     -->
     <!--MgtHostName>mgt.wso2.org</MgtHostName-->
-
-<!--   <HostName><%= @management_subdomain %>.<%= @mb_subdomain %>.<%= @domain %></HostName> -->
-<!--  <HostName><%= @fqdn %></HostName> -->
-
-    <% if @sub_cluster_domain == 'mgt' %>
-<!--    <MgtHostName><%= @management_subdomain %>.<%= @mb_subdomain %>.<%= @domain %></MgtHostName> -->
-    <% end %>
 
     <!--
         The URL of the back end server. This is where the admin services are hosted and
@@ -227,6 +224,40 @@
     <GhostDeployment>
         <Enabled>false</Enabled>
     </GhostDeployment>
+
+
+    <!--
+        Eager loading or lazy loading is a design pattern commonly used in computer programming which
+        will initialize an object upon creation or load on-demand. In carbon, lazy loading is used to
+        load tenant when a request is received only. Similarly Eager loading is used to enable load
+        existing tenants after carbon server starts up. Using this feature, you will be able to include
+        or exclude tenants which are to be loaded when server startup.
+
+        We can enable only one LoadingPolicy at a given time.
+
+        1. Tenant Lazy Loading
+           This is the default behaviour and enabled by default. With this policy, tenants are not loaded at
+           server startup, but loaded based on-demand (i.e when a request is received for a tenant).
+           The default tenant idle time is 30 minutes.
+
+        2. Tenant Eager Loading
+           This is by default not enabled. It can be be enabled by un-commenting the <EagerLoading> section.
+           The eager loading configurations supported are as below. These configurations can be given as the
+           value for <Include> element with eager loading.
+                (i)Load all tenants when server startup             -   *
+                (ii)Load all tenants except foo.com & bar.com       -   *,!foo.com,!bar.com
+                (iii)Load only foo.com &  bar.com to be included    -   foo.com,bar.com
+    -->
+    <Tenant>
+        <LoadingPolicy>
+            <LazyLoading>
+                <IdleTime>30</IdleTime>
+            </LazyLoading>
+            <!-- <EagerLoading>
+                   <Include>*,!foo.com,!bar.com</Include>
+            </EagerLoading>-->
+        </LoadingPolicy>
+    </Tenant>
 
     <!--
      Caching related configurations
@@ -400,6 +431,31 @@
 	 org.wso2.carbon.security.util.SecurityTokenStore
 	-->
 	<!--TokenStoreClassName>org.wso2.carbon.identity.sts.store.DBTokenStore</TokenStoreClassName-->
+
+        <XSSPreventionConfig>
+            <Enabled>true</Enabled>
+            <Rule>allow</Rule>
+            <Patterns>
+                <!--Pattern></Pattern-->
+            </Patterns>
+        </XSSPreventionConfig>
+
+        <!-- Configurations to avoid Cross Site Request Forgery vulnerabilities -->
+        <CSRFPreventionConfig>
+            <!-- CSRFPreventionFilter configurations that adopts Synchronizer Token Pattern -->
+            <CSRFPreventionFilter>
+                <!-- Set below to true to enable the CSRFPreventionFilter -->
+                <Enabled>false</Enabled>
+                <!-- Url Pattern to skip application of CSRF protection-->
+                <SkipUrlPattern>(.*)(/images|/css|/js|/docs)(.*)</SkipUrlPattern>
+            </CSRFPreventionFilter>
+        </CSRFPreventionConfig>
+
+        <!-- Configuration to enable or disable CR and LF sanitization filter-->
+        <CRLFPreventionConfig>
+            <!--Set below to true to enable the CRLFPreventionFilter-->
+            <Enabled>true</Enabled>
+        </CRLFPreventionConfig>
     </Security>
 
     <!--
@@ -601,7 +657,7 @@
     -->
     <FeatureRepository>
 	    <RepositoryName>default repository</RepositoryName>
-	    <RepositoryURL>http://dist.wso2.org/p2/carbon/releases/4.3.0</RepositoryURL>
+	    <RepositoryURL>http://product-dist.wso2.com/p2/carbon/releases/wilkes/</RepositoryURL>
     </FeatureRepository>
 
     <!--

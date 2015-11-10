@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 
 <!--
-  ~ Copyright 2005-2009 WSO2, Inc. (http://wso2.com)
+  ~ Copyright 2005-2011 WSO2, Inc. (http://wso2.com)
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -28,10 +28,11 @@
     <registryRoot>/</registryRoot>
 
     <dbConfig name="wso2registry">
-	<dataSource>jdbc/WSO2CarbonDB</dataSource>	
+        <dataSource>jdbc/<%= @registry_database[1] %></dataSource>
     </dbConfig>
 
-    <%- database = @registry_database -%>
+
+ <%- database = @registry_database -%>
     <dbConfig name="governance">
 	<dataSource>jdbc/<%= database[1]%></dataSource>
     </dbConfig>
@@ -47,29 +48,7 @@
         <instanceId>governance</instanceId>
         <targetPath>/_system/governance</targetPath>
     </mount>
-    <!-- 
-    <mount path="/_system/governance/dependencies" overwrite="true">
-        <instanceId>governance</instanceId>
-        <targetPath>/_system/governance/dependencies/${stage}</targetPath>
-    </mount>
-    -->
 
-    <%- database = @config_database -%>
-    <dbConfig name="config">
-    	<dataSource>jdbc/<%= database[1]%></dataSource>
-    </dbConfig>
-    <remoteInstance url="https://registryernance.cloud-test.wso2.com">
-        <id>config</id>
-        <dbConfig>config</dbConfig>
-        <readOnly>false</readOnly>
-        <registryRoot>/</registryRoot>
-        <enableCache>true</enableCache>
-        <cacheId><%= database[2] %>@jdbc:mysql://<%= database[0] %>:<%= @mysql_port %>/<%= database[1] %></cacheId>
-    </remoteInstance>
-    <mount path="/_system/config" overwrite="virtual">
-        <instanceId>config</instanceId>
-        <targetPath>/_system/config</targetPath>
-    </mount>
 
    <!--<handler class="org.wso2.carbon.registry.extensions.handlers.SynapseRepositoryHandler">
         <filter class="org.wso2.carbon.registry.core.jdbc.handlers.filters.MediaTypeMatcher">
@@ -133,8 +112,8 @@
      startup. -->
     <staticConfiguration>
         <versioningProperties>true</versioningProperties>
-        <versioningComments>false</versioningComments>
-        <versioningTags>false</versioningTags>
-        <versioningRatings>false</versioningRatings>
+        <versioningComments>true</versioningComments>
+        <versioningTags>true</versioningTags>
+        <versioningRatings>true</versioningRatings>
     </staticConfiguration>
 </wso2registry>
