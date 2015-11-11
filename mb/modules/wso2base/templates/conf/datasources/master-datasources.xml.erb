@@ -24,9 +24,6 @@
                     <validationQuery>SELECT 1</validationQuery>
                     <validationInterval>30000</validationInterval>
                     <minIdle>5</minIdle>
-                    <removeAbandoned>true</removeAbandoned>
-                    <logAbandoned>true</logAbandoned>
-                    <removeAbandonedTimeout>180</removeAbandonedTimeout>
                 </configuration>
             </definition>
         </datasource>
@@ -50,10 +47,7 @@
                     <validationQuery>SELECT 1</validationQuery>
                     <validationInterval>30000</validationInterval>
                     <minIdle>5</minIdle>
-                    <removeAbandoned>true</removeAbandoned>
-                    <logAbandoned>true</logAbandoned>
-                    <removeAbandonedTimeout>180</removeAbandonedTimeout>
-                    <jdbcInterceptors>ResetAbandonedTimer</jdbcInterceptors>
+
                 </configuration>
             </definition>
         </datasource>

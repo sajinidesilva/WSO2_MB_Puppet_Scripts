@@ -31,25 +31,6 @@
         <dataSource>jdbc/<%= @registry_database[1] %></dataSource>
     </dbConfig>
 
-
- <%- database = @registry_database -%>
-    <dbConfig name="governance">
-	<dataSource>jdbc/<%= database[1]%></dataSource>
-    </dbConfig>
-    <remoteInstance url="https://registryernance.cloud-test.wso2.com">
-        <id>governance</id>
-        <dbConfig>governance</dbConfig>
-        <readOnly>false</readOnly>
-        <registryRoot>/</registryRoot>
-        <enableCache>true</enableCache>
-        <cacheId><%= database[2] %>@jdbc:mysql://<%= database[0] %>:<%= @mysql_port %>/<%= database[1] %></cacheId>
-    </remoteInstance>
-    <mount path="/_system/governance" overwrite="virtual">
-        <instanceId>governance</instanceId>
-        <targetPath>/_system/governance</targetPath>
-    </mount>
-
-
    <!--<handler class="org.wso2.carbon.registry.extensions.handlers.SynapseRepositoryHandler">
         <filter class="org.wso2.carbon.registry.core.jdbc.handlers.filters.MediaTypeMatcher">
             <property name="mediaType">application/vnd.apache.synapse</property>
