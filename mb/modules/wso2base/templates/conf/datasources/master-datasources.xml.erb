@@ -39,7 +39,7 @@
             </jndiConfig>
             <definition type="RDBMS">
                 <configuration>
-                    <%- database = @config_database -%>
+                    <%- database = @registry_database -%>
 		    <url>jdbc:mysql://<%= database[0] %>:<%= @mysql_port %>/<%= database[4] %></url>
                     <username><%= database[2] %></username>
                     <password><%= database[3] %></password>
