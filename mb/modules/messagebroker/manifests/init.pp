@@ -28,7 +28,7 @@ class messagebroker (
        "conf/axis2/axis2.xml",
        "conf/broker.xml",
        #"conf/tomcat/catalina-server.xml",
-       "conf/datasources/mb-datasources.xml",
+      
     ]
 
     $common_templates = [
@@ -98,6 +98,13 @@ class messagebroker (
         notify  => Service["wso2mb"],
     }
 
+    file {"${carbon_home}/repository/components/lib/${mysql_connector_name}":
+     ensure => present,
+     mode    => '0755',
+     require   =>  Deploy[$deployment_code],
+    }
+
+
     file {
         "/etc/init.d/wso2mb":
             ensure  => present,
@@ -118,8 +125,8 @@ class messagebroker (
                         Initialize[$deployment_code],
                         Deploy[$deployment_code],
                         Push_templates[$service_templates],
-                        File["/etc/init.d/wso2mb"],
                         File["${carbon_home}/bin/wso2server.sh"],
+                        File["/etc/init.d/wso2mb"],
                     ],
                 }
 }

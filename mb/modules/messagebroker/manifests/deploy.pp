@@ -15,6 +15,7 @@ define messagebroker::deploy ( $security, $target, $owner, $group, $deployment_c
 			  "puppet:///modules/${deployment_code}/patches/",
                           "puppet:///modules/wso2base/configs/",
 			  "puppet:///modules/wso2base/patches/",
+			  "puppet:///modules/distributions/mysql/${mysql_connector_name}"
 
                         ],
       notify          => Service["${service}"],

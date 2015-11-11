@@ -29,7 +29,6 @@ node confignode inherits basenode  {
 
 
 
-
   # Service subdomains
   $wso2_env_domain      = $domain
   $mb_subdomain         = 'messaging'
@@ -41,8 +40,9 @@ node confignode inherits basenode  {
   $max_wait             = '360000'
   $mysql_driver_file    = 'mysql-connector-java-5.1.26-bin.jar'
 
-  $mysql_server_1       = "mysql1.${domain}"
+  $mysql_server_1       = "10.100.5.88"
   $mysql_server_2       = "mysql2.${domain}"
+  $mysql_connector_name = "mysql-connector-java-5.1.31.jar"
 
 
 
