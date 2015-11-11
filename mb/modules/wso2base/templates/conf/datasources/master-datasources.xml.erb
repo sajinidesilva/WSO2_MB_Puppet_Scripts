@@ -24,6 +24,9 @@
                     <validationQuery>SELECT 1</validationQuery>
                     <validationInterval>30000</validationInterval>
                     <minIdle>5</minIdle>
+                    <removeAbandoned>true</removeAbandoned>
+                    <logAbandoned>true</logAbandoned>
+                    <removeAbandonedTimeout>180</removeAbandonedTimeout>
                 </configuration>
             </definition>
         </datasource>
@@ -32,7 +35,7 @@
             <name>WSO2_CONFIG_REGISTRY_DB</name>
             <description>The datasource used for registry</description>
             <jndiConfig>
-                <name>jdbc/<%= @config_database[1] %></name>
+                <name>jdbc/<%= @registry_database[1] %></name>
             </jndiConfig>
             <definition type="RDBMS">
                 <configuration>
@@ -47,7 +50,10 @@
                     <validationQuery>SELECT 1</validationQuery>
                     <validationInterval>30000</validationInterval>
                     <minIdle>5</minIdle>
-
+                    <removeAbandoned>true</removeAbandoned>
+                    <logAbandoned>true</logAbandoned>
+                    <removeAbandonedTimeout>180</removeAbandonedTimeout>
+                    <jdbcInterceptors>ResetAbandonedTimer</jdbcInterceptors>
                 </configuration>
             </definition>
         </datasource>
